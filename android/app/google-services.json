@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "599213193826",
+    "project_id": "ezzybill-1f885",
+    "storage_bucket": "ezzybill-1f885.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599213193826:android:f9f20bd3175d628cf5ef3b",
+        "android_client_info": {
+          "package_name": "com.example.ezzybill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzu0CT6Z9AlzoEmvqow7pmEUppMm5mENQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599213193826:android:5ba29438fb2286a8f5ef3b",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzu0CT6Z9AlzoEmvqow7pmEUppMm5mENQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

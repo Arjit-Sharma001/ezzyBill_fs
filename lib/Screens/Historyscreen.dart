@@ -48,7 +48,7 @@ class _HistoryscreenState extends State<Historyscreen> {
 
   Widget _buildShimmerPlaceholder() {
     return ListView.builder(
-      itemCount: 4,
+      itemCount: 8,
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
           baseColor: Colors.grey.shade300,
@@ -103,7 +103,7 @@ class _HistoryscreenState extends State<Historyscreen> {
             child: CardComm(
               count: "...",
               title: "Today Sales",
-              screenHeight: 600,
+              screenHeight: 610,
             ),
           ),
           SizedBox(width: 10),
@@ -111,7 +111,7 @@ class _HistoryscreenState extends State<Historyscreen> {
             child: CardComm(
               count: "...",
               title: "This Month",
-              screenHeight: 600,
+              screenHeight: 610,
             ),
           ),
         ],
@@ -143,24 +143,27 @@ class _HistoryscreenState extends State<Historyscreen> {
               children: [
                 isLoading
                     ? _buildShimmerCardPlaceholder()
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: CardComm(
-                              count: "₹${totalTodaySales.toStringAsFixed(2)}",
-                              title: "Today Sales",
-                              screenHeight: screenHeight,
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: CardComm(
+                                count: "₹${totalTodaySales.toStringAsFixed(2)}",
+                                title: "Today Sales",
+                                screenHeight: screenHeight,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: CardComm(
-                              count: "₹${totalMonthSales.toStringAsFixed(2)}",
-                              title: "This Month",
-                              screenHeight: screenHeight,
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: CardComm(
+                                count: "₹${totalMonthSales.toStringAsFixed(2)}",
+                                title: "This Month",
+                                screenHeight: screenHeight,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                 SizedBox(height: 10),
                 Expanded(

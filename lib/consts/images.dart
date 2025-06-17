@@ -52,6 +52,7 @@ const icUploadImage = "assets/icons/upload.png";
 const icWallet = "assets/icons/wallet.png";
 const icWhiteTick = "assets/icons/white_tick.png";
 const icWholeSale = "assets/icons/wholesale.png";
+const icNoimage = "assets/icons/noimage.png";
 const icPayment = "assets/icons/payment.png";
 const icUpi = "assets/icons/upi.png";
 

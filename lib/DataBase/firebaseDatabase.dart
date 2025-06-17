@@ -35,16 +35,8 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 // Local fallback list
 final List<Map<String, dynamic>> FooditemList_local = [
-  {'image': 'imgfood1', 'name': 'italianpizza', 'quantity': 2, 'price': 450},
-  {'image': 'imgfood2', 'name': 'pasta', 'quantity': 1, 'price': 290},
-  {'image': 'imgfood3', 'name': 'noodles', 'quantity': 3, 'price': 240},
-  {'image': 'imgfood4', 'name': 'redpasta', 'quantity': 3, 'price': 250},
-  {'image': 'imgfood5', 'name': 'chowmein', 'quantity': 2, 'price': 200},
-  {'image': 'imgfood6', 'name': 'cheeseburger', 'quantity': 2, 'price': 380},
-  {'image': 'imgfood7', 'name': 'itm1', 'quantity': 4, 'price': 200},
-  {'image': 'imgfood8', 'name': 'itm2', 'quantity': 3, 'price': 250},
-  {'image': 'imgfood9', 'name': 'itm3', 'quantity': 4, 'price': 240},
-  {'image': 'imgfood10', 'name': 'itm4', 'quantity': 2, 'price': 270},
+  {'image': 'icNoimage', 'name': 'No Item', 'quantity': 2, 'price': 00},
+  {'image': 'icNoimage', 'name': 'No Item', 'quantity': 1, 'price': 00},
 ];
 
 // Convert local list to model list

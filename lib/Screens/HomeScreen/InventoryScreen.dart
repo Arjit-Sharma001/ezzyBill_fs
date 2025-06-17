@@ -1,15 +1,22 @@
 import 'package:ezzybill/DataBase/firebaseDatabase.dart';
 import 'package:ezzybill/Screens/InvoiceScreen/Invoicescreen.dart';
-import 'package:ezzybill/consts/list.dart';
 import 'package:flutter/material.dart';
 import 'package:ezzybill/consts/consts.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Inventoryscreen extends StatefulWidget {
-  int billNo;
+  final int billNo;
+  final ScrollController externalScrollController;
+  final ValueNotifier<bool> isHeaderVisible;
 
-  Inventoryscreen({required this.billNo});
+  Inventoryscreen({
+    required this.billNo,
+    required this.externalScrollController,
+    required this.isHeaderVisible,
+  });
+
   @override
   State<Inventoryscreen> createState() => _InventoryscreenState();
 }
@@ -22,6 +29,17 @@ class _InventoryscreenState extends State<Inventoryscreen> {
   @override
   void initState() {
     super.initState();
+
+    widget.externalScrollController.addListener(() {
+      if (widget.externalScrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        widget.isHeaderVisible.value = false;
+      } else if (widget.externalScrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        widget.isHeaderVisible.value = true;
+      }
+    });
+
     fetchFoodItems().then((items) {
       setState(() {
         FooditemList = items;
@@ -47,9 +65,11 @@ class _InventoryscreenState extends State<Inventoryscreen> {
   }
 
   void decrement(int index) {
-    setState(() {
-      if (itemCounts[index] > 0) itemCounts[index]--;
-    });
+    if (itemCounts[index] > 0) {
+      setState(() {
+        itemCounts[index]--;
+      });
+    }
   }
 
   Widget buildShimmerItem(double height, double width) {
@@ -65,6 +85,15 @@ class _InventoryscreenState extends State<Inventoryscreen> {
         ),
         height: height * 0.4,
         width: width,
+        child: Column(
+          children: [
+            Container(height: height * 0.25, color: Colors.white),
+            SizedBox(height: 8),
+            Container(height: 20, width: width * 0.5, color: Colors.white),
+            Spacer(),
+            Container(height: 20, width: width * 0.3, color: Colors.white),
+          ],
+        ),
       ),
     );
   }
@@ -73,7 +102,7 @@ class _InventoryscreenState extends State<Inventoryscreen> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height - 100;
     double screenWidth = MediaQuery.of(context).size.width;
-    double totalAmount;
+    double totalAmount = calculateTotalAmount();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -87,6 +116,7 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                 Expanded(
                   child: isLoading
                       ? GridView.builder(
+                          controller: widget.externalScrollController,
                           padding: const EdgeInsets.all(10),
                           itemCount: 6,
                           gridDelegate:
@@ -96,10 +126,11 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                             childAspectRatio: 0.75,
                             mainAxisExtent: screenHeight * 0.4,
                           ),
-                          itemBuilder: (context, index) =>
+                          itemBuilder: (_, __) =>
                               buildShimmerItem(screenHeight, screenWidth),
                         )
                       : GridView.builder(
+                          controller: widget.externalScrollController,
                           physics: BouncingScrollPhysics(),
                           padding: EdgeInsets.fromLTRB(
                             2,
@@ -145,15 +176,12 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                                       width: double.infinity,
                                       height: screenHeight * 0.25,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          FooditemListt[index][image],
-                                          width: double.infinity,
-                                          height: screenHeight * 0.25,
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
+                                      errorBuilder: (_, __, ___) => Image.asset(
+                                        icNoimage,
+                                        width: double.infinity,
+                                        height: screenHeight * 0.25,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: screenHeight * 0.015),
@@ -197,8 +225,10 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                                               width: screenWidth * 0.08,
                                               height: screenWidth * 0.08,
                                               child: IconButton(
-                                                onPressed: () =>
-                                                    decrement(index),
+                                                onPressed: itemCounts[index] ==
+                                                        0
+                                                    ? null
+                                                    : () => decrement(index),
                                                 icon: Icon(Icons.remove),
                                                 iconSize: screenWidth * 0.04,
                                               ),
@@ -285,12 +315,19 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Items: ${itemCounts.reduce((a, b) => a + b)}"),
-                          Text("Rs. ${totalAmount = calculateTotalAmount()}",
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.06,
-                                fontFamily: semibold,
-                              )),
+                          Text(
+                            "Items: ${itemCounts.fold(0, (a, b) => a + b)}",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                            ),
+                          ),
+                          Text(
+                            "Rs. $totalAmount",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.06,
+                              fontFamily: semibold,
+                            ),
+                          ),
                         ],
                       ),
                       ElevatedButton(
@@ -313,7 +350,8 @@ class _InventoryscreenState extends State<Inventoryscreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(icCart, color: whiteColor, height: 24),
+                            Icon(Icons.shopping_cart,
+                                size: 24, color: whiteColor),
                             SizedBox(width: 8),
                             Text("View Cart",
                                 style: TextStyle(color: Colors.white)),

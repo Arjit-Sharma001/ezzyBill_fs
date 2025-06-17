@@ -1,13 +1,11 @@
-// Your imports remain the same...
-
 import 'package:ezzybill/DataBase/firebaseDatabase.dart';
 import 'package:ezzybill/DataBase/invoicesHistory.dart';
 import 'package:ezzybill/Screens/Home.dart';
 import 'package:ezzybill/Screens/HomeScreen/InventoryScreen.dart';
 import 'package:ezzybill/consts/consts.dart';
 import 'package:ezzybill/widgetsCommon/BgWidget.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DynamicBillTabs extends StatefulWidget {
@@ -18,6 +16,7 @@ class DynamicBillTabs extends StatefulWidget {
 class _DynamicBillTabsState extends State<DynamicBillTabs> {
   TextEditingController searchController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  ValueNotifier<bool> isHeaderVisible = ValueNotifier(true);
 
   int selectedIndex = 0;
   int billCounter = 1;
@@ -48,7 +47,13 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
 
     billCounter = lastBillNo + 1;
     bills = ['Bill $billCounter'];
-    billScreens = [Inventoryscreen(billNo: billCounter)];
+    billScreens.add(
+      Inventoryscreen(
+        billNo: lastBillNo,
+        externalScrollController: _scrollController,
+        isHeaderVisible: isHeaderVisible,
+      ),
+    );
 
     setState(() {
       selectedIndex =
@@ -57,12 +62,10 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
   }
 
   void addBill() async {
-    // Extract used numbers from current bills
     Set<int> usedNumbers = bills.map((bill) {
       return int.tryParse(bill.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
     }).toSet();
 
-    // Find the smallest missing bill number starting from 1
     int newBillNo = await returnlastBillNo() + 1;
     while (usedNumbers.contains(newBillNo)) {
       newBillNo++;
@@ -70,10 +73,15 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
 
     setState(() {
       bills.add('Bill $newBillNo');
-      billScreens.add(Inventoryscreen(billNo: newBillNo));
+      billScreens.add(
+        Inventoryscreen(
+          billNo: newBillNo,
+          externalScrollController: _scrollController,
+          isHeaderVisible: isHeaderVisible,
+        ),
+      );
       selectedIndex = bills.length - 1;
 
-      // Only update billCounter if newBillNo is greater
       if (newBillNo >= billCounter) {
         billCounter = newBillNo + 1;
       }
@@ -165,8 +173,15 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: primaryColor2,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                // Custom back action here
+                // Example: show dialog or navigate to a specific screen
+                Navigator.pop(context);
+              },
+            ),
             actions: [
-              // SizedBox(width: screenHeight * 0.08),
               Padding(
                 padding: const EdgeInsets.only(right: 10, bottom: 6),
                 child: Align(
@@ -192,71 +207,72 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
                   ),
                 ),
               ),
-              // SizedBox(width: screenHeight * 0.02),
             ],
           ),
           body: billScreens.isEmpty
               ? Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    // Bill Tabs
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-                      child: Row(
-                        children: [
-                          ...List.generate(bills.length, (index) {
-                            bool isSelected = selectedIndex == index;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: GestureDetector(
-                                onTap: () => selectBill(index),
-                                child: Chip(
-                                  label: Text(
-                                    bills[index],
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? whiteColor
-                                          : primaryColor2,
+              : ValueListenableBuilder<bool>(
+                  valueListenable: isHeaderVisible,
+                  builder: (context, visible, _) => Column(
+                    children: [
+                      if (visible)
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          padding:
+                              EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+                          child: Row(
+                            children: [
+                              ...List.generate(bills.length, (index) {
+                                bool isSelected = selectedIndex == index;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () => selectBill(index),
+                                    child: Chip(
+                                      label: Text(
+                                        bills[index],
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? whiteColor
+                                              : primaryColor2,
+                                        ),
+                                      ),
+                                      onDeleted: () => removeBill(index),
+                                      backgroundColor: isSelected
+                                          ? primaryColor2
+                                          : lightopaque,
+                                      deleteIconColor: Colors.white,
+                                      labelPadding:
+                                          EdgeInsets.symmetric(horizontal: 8),
                                     ),
                                   ),
-                                  onDeleted: () => removeBill(index),
-                                  backgroundColor:
-                                      isSelected ? primaryColor2 : lightopaque,
-                                  deleteIconColor: Colors.white,
-                                  labelPadding:
-                                      EdgeInsets.symmetric(horizontal: 8),
+                                );
+                              }),
+                              GestureDetector(
+                                onTap: addBill,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: lightopaque,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: EdgeInsets.all(4),
+                                  child: Icon(Icons.add, color: Colors.white),
                                 ),
                               ),
-                            );
-                          }),
-                          // Add Bill Icon
-                          GestureDetector(
-                            onTap: addBill,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: lightopaque,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.all(4),
-                              child: Icon(Icons.add, color: Colors.white),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
+                      Expanded(
+                        child: IndexedStack(
+                          index: selectedIndex,
+                          children: billScreens,
+                        ),
                       ),
-                    ),
-                    // Bill Body
-                    Expanded(
-                      child: IndexedStack(
-                        index: selectedIndex,
-                        children: billScreens,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       ),
     );
   }
-}
+} // END

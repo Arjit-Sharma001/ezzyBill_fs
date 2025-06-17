@@ -98,31 +98,34 @@ class _HomescreenState extends State<Homescreen> {
   Widget _createBillCard(Size size) {
     return Hero(
       tag: "createBill",
-      child: InkWell(
-        onTap: createNewInvoice,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          height: size.height * 0.14,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: primaryColor2,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_circle_outline,
-                  size: size.width * 0.09, color: Colors.black),
-              SizedBox(width: 12),
-              Flexible(
-                child: Text('Create New Bill',
-                    style: TextStyle(
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87)),
-              ),
-            ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: createNewInvoice,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: size.height * 0.14,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: primaryColor2,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_circle_outline,
+                    size: size.width * 0.09, color: Colors.black),
+                SizedBox(width: 12),
+                Flexible(
+                  child: Text('Create New Bill',
+                      style: TextStyle(
+                          fontSize: size.width * 0.045,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -183,7 +186,7 @@ class _HomescreenState extends State<Homescreen> {
       final parts = raw.split("-");
       final monthNum = int.tryParse(parts[0]) ?? 1;
       final monthName = DateFormat.MMM().format(DateTime(0, monthNum));
-      return "$monthName ${parts[1]}";
+      return "$monthName";
     }
 
     return Container(

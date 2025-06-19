@@ -49,7 +49,7 @@ class _DynamicBillTabsState extends State<DynamicBillTabs> {
     bills = ['Bill $billCounter'];
     billScreens.add(
       Inventoryscreen(
-        billNo: lastBillNo,
+        billNo: billCounter,
         externalScrollController: _scrollController,
         isHeaderVisible: isHeaderVisible,
       ),

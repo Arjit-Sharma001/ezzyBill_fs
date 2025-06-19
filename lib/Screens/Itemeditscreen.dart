@@ -39,7 +39,7 @@ class _ItemEditScreenState extends State<ItemEditScreen> {
       Uri.parse(
           'https://api.github.com/repos/Arjit-Sharma001/ezzyBill_fs/contents/assets/images/$name'),
       headers: {
-        'Authorization': 'Bearer ENTER API KEY',
+        'Authorization': 'Bearer API KEY',
         'Accept': 'application/vnd.github+json',
       },
       body: jsonEncode({
